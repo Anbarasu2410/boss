@@ -8,30 +8,30 @@ const TopHeader = ({ onToggleSidebar, currentPage }) => {
   const [userData, setUserData] = useState({});
 
   // Initialize and listen for localStorage changes
-  useEffect(() => {
-    // Initial load
-    const loadUserData = () => {
-      const data = JSON.parse(localStorage.getItem('user') || '{}');
-      setUserData(data);
-    };
+  // useEffect(() => {
+  //   // Initial load
+  //   const loadUserData = () => {
+  //     const data = JSON.parse(localStorage.getItem('user') || '{}');
+  //     setUserData(data);
+  //   };
 
-    loadUserData();
+  //   loadUserData();
 
-    // Listen for storage events (when other components update localStorage)
-    const handleStorageChange = () => {
-      loadUserData();
-    };
+  //   // Listen for storage events (when other components update localStorage)
+  //   const handleStorageChange = () => {
+  //     loadUserData();
+  //   };
 
-    window.addEventListener('storage', handleStorageChange);
+  //   window.addEventListener('storage', handleStorageChange);
     
-    // Also listen for custom events if needed
-    window.addEventListener('userDataUpdated', handleStorageChange);
+  //   // Also listen for custom events if needed
+  //   window.addEventListener('userDataUpdated', handleStorageChange);
 
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('userDataUpdated', handleStorageChange);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('storage', handleStorageChange);
+  //     window.removeEventListener('userDataUpdated', handleStorageChange);
+  //   };
+  // }, []);
 
   const userMenuItems = [
     {

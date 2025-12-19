@@ -22,6 +22,10 @@ const companyUserSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
     status: { type: String, enum: ['ACTIVE', 'INACTIVE'], default: 'ACTIVE' },
 
     joinedAt: { type: Date, default: Date.now }

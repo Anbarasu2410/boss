@@ -1,5 +1,5 @@
 // models/RolePermission.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const rolePermissionSchema = new mongoose.Schema({
   roleId: { type: Number, required: true },
@@ -11,4 +11,4 @@ const rolePermissionSchema = new mongoose.Schema({
 
 
 
-module.exports = mongoose.model('RolePermission', rolePermissionSchema);
+export default mongoose.model('RolePermission', rolePermissionSchema);

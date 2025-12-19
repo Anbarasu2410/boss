@@ -1,72 +1,75 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import axios from "axios";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { loginApi, selectCompanyApi } from "../api/authApi";
 
-// Create the Context
 const AuthContext = createContext();
 
-// Hook for easy access in components
-export const useAuth = () => useContext(AuthContext);
-
-// Axios instance
-const api = axios.create({
-  baseURL: process.env.REACT_APP_URL || "http://localhost:5000/api", // adjust to your backend
-});
-
-// Provider component
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
+  const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Load user on page refresh
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-
-    if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    // Safe load companies from sessionStorage
+    try {
+      const storedCompanies = sessionStorage.getItem("companies");
+      setCompanies(storedCompanies ? JSON.parse(storedCompanies) : []);
+    } catch (err) {
+      console.error("Failed to parse companies from sessionStorage", err);
+      setCompanies([]);
     }
-
     setLoading(false);
   }, []);
 
-  // Login function
+  // Login: calls existing loginApi and updates state
   const login = async (email, password) => {
-    try {
-      const res = await api.post("/auth/login", { email, password });
-      const { token, user } = res.data;
+    const res = await loginApi({ email, password });
 
-      // Save to localStorage
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+    if (!res?.data) throw new Error("Invalid response from server");
 
-      // Set axios header
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-      // Update state
-      setUser(user);
-
-      return { success: true, role: user.role };
-    } catch (err) {
-      console.error("Login failed:", err.response?.data || err.message);
-      return {
-        success: false,
-        message: err.response?.data?.message || "Login failed",
-      };
+    if (res.data.autoSelected) {
+      localStorage.setItem("token", res.data.token);
+      setToken(res.data.token);
+      return { autoSelected: true, token: res.data.token };
     }
+
+    const companyList = res.data.companies || [];
+    setCompanies(companyList);
+
+    try {
+      sessionStorage.setItem("companies", JSON.stringify(companyList));
+    } catch (err) {
+      console.error("Failed to store companies in sessionStorage", err);
+    }
+
+    return { autoSelected: false, companies: companyList };
   };
 
-  // Logout function
+  // Select a company
+  const selectCompany = async (companyId) => {
+    const res = await selectCompanyApi({ companyId });
+    if (!res?.data?.token) throw new Error("Invalid response from server");
+
+    localStorage.setItem("token", res.data.token);
+    setToken(res.data.token);
+
+    sessionStorage.removeItem("companies");
+    setCompanies([]);
+
+    return res.data.token;
+  };
+
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    delete api.defaults.headers.common["Authorization"];
-    setUser(null);
+    localStorage.clear();
+    sessionStorage.clear();
+    setToken(null);
+    setCompanies([]);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, api }}>
+    <AuthContext.Provider value={{ token, login, logout, selectCompany, companies, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext);

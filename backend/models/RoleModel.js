@@ -1,11 +1,14 @@
 // models/Role.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const roleSchema = new mongoose.Schema({
   id: { type: Number, required: true, unique: true }, // manual numeric ID
   name: { type: String, required: true }, // Boss, Admin
   level: { type: Number, required: true },
   isSystemRole: { type: Boolean, default: true }
-}, { timestamps: true });
+},  {
+  collection: 'roles',
+  timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }
+});
 
-module.exports = mongoose.model('Role', roleSchema);
+export default mongoose.model ('Role', roleSchema);

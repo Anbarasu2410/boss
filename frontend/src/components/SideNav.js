@@ -14,7 +14,8 @@ import {
   CarOutlined,
   ScheduleOutlined,
   DeploymentUnitOutlined,
-  TeamOutlined
+  TeamOutlined,
+   DashboardOutlined
 } from '@ant-design/icons';
 
 const SideNav = ({ collapsed, onClose }) => {
@@ -80,6 +81,11 @@ const SideNav = ({ collapsed, onClose }) => {
       icon: <ScheduleOutlined />,
       label: 'Tasks',
     },
+     {
+            key: '/dashboard',
+            icon: <DashboardOutlined />,
+            label: 'Dashboard',
+          },
     {
       key: '/notes',
       icon: <FileTextOutlined />,

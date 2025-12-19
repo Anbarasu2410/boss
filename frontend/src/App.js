@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
 import LoginPage from './LoginPage';
 import HomePage from './pages/HomePage';
 import CompaniesPage from './pages/CompaniesPage';
@@ -18,6 +19,9 @@ import DriverProfile from './pages/DriverProfile';
 import DailyManpowerStatus from './pages/execution/taskManagement/DailyManpowerStatus';
 import ProjectProgressDashboard from './pages/ProjectProgressDashboard';
 import ProgressReportDashboard from "./pages/ProgressReportDashboard";
+import Dashboard from './pages/Dashboard';
+
+import SelectCompany from './pages/SelectCompany';
 
 
  
@@ -77,6 +81,17 @@ function App() {
 <Route path="/employees" element={
   <AppLayout>
     <EmployeeList />
+  </AppLayout>
+} />
+{/* Employee routes */}
+<Route path="/dashboard" element={
+  <AppLayout>
+    <Dashboard />
+  </AppLayout>
+} />
+<Route path="/select-company" element={
+  <AppLayout>
+    <SelectCompany />
   </AppLayout>
 } />
 
